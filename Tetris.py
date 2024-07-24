@@ -4,7 +4,6 @@ import time
 import random
 from copy import deepcopy
 from termcolor import colored
-
 class Canvas:
     def __init__(self):
         self._x = 10
@@ -19,6 +18,7 @@ class Canvas:
 
     def print(self):
         self.clear()
+        
         print(f"     LINES - {o.lines:0>3}")
         print(f"  _ _ _ _ _ _ _ _ _ _")
         for y in range(self._y):            
@@ -351,3 +351,5 @@ while not stopGame:
     if j == 0:
         canvas.print()
         j = 1
+
+
