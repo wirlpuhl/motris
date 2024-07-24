@@ -40,16 +40,20 @@ class Canvas:
                 if y == 14:
                     row[1:11] = [colored("        ---        ", "white")]
             if y == 0:
-                row.append("SCORE")
+                row.append("BEST")
             if y == 1:
-                row.append(f"{o.score:0>6}")
+                row.append(f"{o.best:0>6}")
             if y == 3:
-                row.append("LEVEL")
+                row.append("SCORE")
             if y == 4:
-                row.append(f"{o.level:0>2}")
+                row.append(f"{o.score:0>6}")
             if y == 6:
-                row.append("NEXT")
+                row.append("LEVEL")
             if y == 7:
+                row.append(f"{o.level:0>2}")
+            if y == 9:
+                row.append("NEXT")
+            if y == 10:
                 if o.nextObject[1] == 0:
                     row.append("# #")
                 if o.nextObject[1] == 1 or o.nextObject[1] == 3 or o.nextObject[1] == 5:
@@ -60,7 +64,7 @@ class Canvas:
                     row.append("# #")
                 if o.nextObject[1] == 6:
                     row.append("# # # #")
-            if y == 8:
+            if y == 11:
                 if o.nextObject[1] == 0 or o.nextObject[1] == 2:
                     row.append("# #")
                 if o.nextObject[1] == 1:
@@ -165,6 +169,7 @@ class Objects:
         self.score = 0
         self.lines = 0
         self.level = 0
+        self.best = 0
 
     def setObject(self, pos, object, mark):
         for kor in self.objectList[object]:
@@ -220,6 +225,7 @@ moveRotate = False
 moveDone = True
 gameStart = False
 gameOver = False
+pauseGame = False
 
 canvas = Canvas()
 o = Objects(canvas)
@@ -228,12 +234,23 @@ k = 0
 i = 0
 j = 0
 while not stopGame:
+    with open("highscore.txt", "r") as highscore:
+        highscoreList = highscore.readlines()
+        for i in range(len(highscoreList)):
+            highscoreList[i] = int(highscoreList[i])
+        o.best = max(highscoreList)
+
     if keyboard.is_pressed("s"):       
             gameStart = True 
     while not stopGame and not gameOver and gameStart:
 #Keyboard Inputs
         if keyboard.is_pressed("Escape"):       
             stopGame = True 
+        if keyboard.is_pressed("p"): 
+            pauseGame = True      
+            while pauseGame:
+                if keyboard.is_pressed("s"): 
+                    pauseGame = False
         if keyboard.is_pressed("d") and moveDone:
             moveRight = True
             moveDone = False
@@ -302,6 +319,9 @@ while not stopGame:
             o.pos = o.startPos 
             if canvas.collision(o.pos, o.activeObject):
                 gameOver = True
+                if o.score > o.best:
+                    with open("highscore.txt", "a") as highscore:
+                        highscore.write(f"\n{o.score}")
                 j = 0      
             o.setObject(o.pos, o.activeObject, "#")
             canvas.print()
