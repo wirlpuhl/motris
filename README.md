@@ -1,1 +1,1 @@
-## Simple Tetris Game in the python console.
+## Simple Tetris Game in the terminal.
